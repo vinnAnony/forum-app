@@ -4,11 +4,12 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use \Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class ReadThreadsTest extends TestCase
 {
+    use DatabaseMigrations;
     protected $thread;
 
     public function setUp()
@@ -28,7 +29,7 @@ class ReadThreadsTest extends TestCase
     /** @test */
     function a_user_can_read_a_single_thread()
     {
-        $this->get('/threads/' . $this->thread->id)
+        $this->get($this->thread->path())
             ->assertSee($this->thread->title);
     }
 
@@ -38,7 +39,7 @@ class ReadThreadsTest extends TestCase
         $reply = factory('App\Reply')
             ->create(['thread_id' => $this->thread->id]);
 
-        $this->get('/threads/' . $this->thread->id)
+        $this->get($this->thread->path())
             ->assertSee($reply->body);
     }
 }
