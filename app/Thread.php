@@ -6,10 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
+    /**
+     * Don't auto-apply mass assignment protection.
+     *
+     * @var array
+     */
     protected $guarded = [];
 
     /**
-     * Fetch a path to the current thread.
+     * Get a string path for the thread.
      *
      * @return string
      */
@@ -18,11 +23,21 @@ class Thread extends Model
         return "/threads/{$this->channel->slug}/{$this->id}";
     }
 
+    /**
+     * A thread belongs to a creator.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function creator()
     {
-        return $this->hasMany(Reply::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
+    /**
+     * A thread is assigned a channel.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function channel()
     {
         return $this->belongsTo(Channel::class);
@@ -38,6 +53,11 @@ class Thread extends Model
         return $this->hasMany(Reply::class);
     }
 
+    /**
+     * Add a reply to the thread.
+     *
+     * @param $reply
+     */
     public function addReply($reply)
     {
         $this->replies()->create($reply);
